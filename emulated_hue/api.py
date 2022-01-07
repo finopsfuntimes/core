@@ -1048,12 +1048,10 @@ class HueApi:
             result[group_id]["lights"] = []
             result[group_id]["name"] = group_conf["name"] or area["name"]
             lights_on = 0
-            # get all entities for this device
+            # evaluate all light entities for this area/group
             async for entity in self.__async_get_group_lights(group_id):
                 entity = self.hue.hass.get_state(entity["entity_id"], attribute=None)
-                light_id = await self.config.async_entity_id_to_light_id(
-                    entity["entity_id"]
-                )
+                light_id = await self.config.async_entity_id_to_light_id(entity["entity_id"])
                 result[group_id]["lights"].append(light_id)
                 if entity["state"] == const.HASS_STATE_ON:
                     lights_on += 1
@@ -1061,8 +1059,8 @@ class HueApi:
                         # set state of first light as group state
                         entity_obj = await self.__async_entity_to_hue(entity)
                         result[group_id]["action"] = entity_obj["state"]
-            result[group_id]["state"]["any_on"] = True if lights_on > 0 else False
-            result[group_id]["state"]["all_on"] = True if lights_on == len(result[group_id]["lights"]) else False
+            result[group_id]["state"]["any_on"] = bool(lights_on > 0)
+            result[group_id]["state"]["all_on"] = bool(lights_on > 0 and lights_on == len(result[group_id]["lights"]))
 
         return result
 
