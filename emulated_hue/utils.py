@@ -127,7 +127,14 @@ def save_json(filename: str, data: dict):
     """Save JSON data to a file."""
     safe_copy = filename + ".backup"
     if os.path.isfile(filename):
-        os.replace(filename, safe_copy)
+        try:
+            os.replace(filename, safe_copy)
+        except FileNotFoundError:
+            LOGGER.error(
+                "Failed to backup config file before updating - FileNotFoundError %s >> %s",
+                filename,
+                safe_copy,
+            )
     try:
         json_data = json.dumps(data, sort_keys=True, indent=4, ensure_ascii=False)
         with open(filename, "w") as file_obj:
