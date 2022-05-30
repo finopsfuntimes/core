@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -51,7 +51,7 @@ jobs:
           install: true
 
       - name: Cache Docker layers
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.1
         continue-on-error: true
         with:
           path: /tmp/.buildx-cache
@@ -117,7 +117,7 @@ jobs:
           docker save --output ci-${{ matrix.arch_friendly }}-${{ github.run_number }}.tar.gz ci:${{ github.run_number }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ci-${{ matrix.arch_friendly }}-${{ github.run_number }}
           path: ci-${{ matrix.arch_friendly }}-${{ github.run_number }}.tar.gz
@@ -144,7 +144,7 @@ jobs:
           }
     steps:
       - name: Download container artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: ci-${{ matrix.arch }}-${{ github.run_number }}
 
